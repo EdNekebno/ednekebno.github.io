@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<!-- Template by Quackit.com -->
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>Ed Nekebno - ZX Spectrum Emulator</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS: You can use this stylesheet to override any Bootstrap styles and/or apply your own styles -->
+    <link href="css/custom.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Logo and responsive toggle -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <!-- Navbar links -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    <li>
+                        <a href="/centaur.html">DGT Centaur</a>
+                    </li>
+                    <li>
+                        <a href="/rives.html">Rives Games</a>
+                    </li>
+		<li class="active">
+                        <a href="/spectrum.html">ZX Spectrum</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Content -->
+
+    <div class="container">
+
+<div style='padding:30px;'>
+	<p>The ZX Spectrum is my all-time favorite retro computer. After the <a href="https://rives.io">rives.io</a> Game Jam, I got curious how much it could do and whether it could support a ZX Spectrum Emulator.</p>
+<p>Being able to run ZX Spectrum games opens up the possibilities to use rives features such as playback and score verification with games that can be 30-40 years old!</p>
+<p>It turns out that it is very possible to do. Your game controller can emulate a Kempston Joystick or keys can be remapped. The only thing that turns out to be elusive is good 128k AY sound chip sound - perhaps it's a step too far for a limited system, perhaps I'll come back another time and solve it. At the moment it makes sound in 128k mode, but it's not great. 48k mode is good. As is everything else.</p>
+<p>The emulator loads .z80 or .tap files, but .z80 is preferable from a user experience perspective.</p>
+<p>But obviously you're just here for the examples :) As with the games on my rives page, it's best to ensure only one of these is running at a time. But I'll embed a few examples here:</p>
+<p style="text-align:center;">First let's have a plain old ZX Spectrum booting</p>
+<div style="text-align:center;"><iframe src="https://emulator.rives.io/#simple=true&cartridge=https://raw.githubusercontent.com/EdNekebno/myrivescartridges/raw/main/zxspectrum.sqfs" allowfullscreen width="516" height="548" style="border:2px solid #131415; overflow:hidden"></iframe></div>
+<p style="text-align:center;">Technically that's impressive (if I say so myself :) ). But I know you want to play games. Space Invaders?</p>
+<div style="text-align:center;"><iframe src="https://emulator.rives.io/#simple=true&cartridge=https://raw.githubusercontent.com/EdNekebno/myrivescartridges/raw/main/spaceinvaders.sqfs" allowfullscreen width="516" height="548" style="border:2px solid #131415; overflow:hidden"></iframe></div>
+<p style="text-align:center;">Or maybe a quick game of pacman?</p>
+<div style="text-align:center;"><iframe src="https://emulator.rives.io/#simple=true&cartridge=https://raw.githubusercontent.com/EdNekebno/myrivescartridges/raw/main/pacman.sqfs" allowfullscreen width="516" height="548" style="border:2px solid #131415; overflow:hidden"></iframe></div>
+<p style="text-align:center;">Or the surprisingly fun 3D Death Chase?</p>
+<div style="text-align:center;"><iframe src="https://emulator.rives.io/#simple=true&cartridge=https://raw.githubusercontent.com/EdNekebno/myrivescartridges/raw/main/deathchase.sqfs" allowfullscreen width="516" height="548" style="border:2px solid #131415; overflow:hidden"></iframe></div>
+
+</div>
+
+    </div>
+    <!-- /.container -->
+	
+	<footer>
+		<div class="footer-blurb">
+
+        </div>
+        
+	</footer>
+
+	
+    <!-- jQuery -->
+    <script src="js/jquery-1.11.3.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+</body>
+
+</html>
