@@ -1,0 +1,293 @@
+<HTML>
+    <HEAD>
+        <TITLE>Block Game Creator for RIVES</TITLE>
+    </HEAD>
+    <!-- Load Blockly core -->
+    <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
+    <!-- Load the default blocks -->
+    <script src="https://unpkg.com/blockly/blocks_compressed.js"></script>
+    <!-- Load a generator -->
+    <script src="https://unpkg.com/blockly/lua_compressed.js"></script>
+    <!-- Load a message file -->
+    <script src="https://unpkg.com/blockly/msg/en.js"></script>
+    <!-- Rives block defintions -->
+    <script src="blockdefinitions.js"></script>
+    <!-- Custom Block generator -->
+    <script src="blockgenerator.js"></script>
+    <!-- Lua header -->
+    <script src="luaheader.js"></script>
+    <!-- Toolbox -->
+    <script src="toolbox.js"></script>
+    <!-- Snake game -->
+    <script src="snake.js"></script>
+    <!-- main -->
+    <script src="main.js"></script>
+<BODY>
+    <div id="blocklyDiv" style="height: 95%; width: 50%; display:block; float:left;">
+        <div style="padding-bottom: 10px;">
+            <input type="button" value="New" onClick="newWorkspace()">
+            <input type="button" value="Save" onClick="saveWorkspace()">
+            <input type="button" value="Load" onClick="document.getElementById('uploadfile').click();">
+            <input type="file" id="uploadfile" name="uploadfile" value="Load" onChange="uploadWorkspace()" style="display:none;">
+            <!-- input type="button" value="Make Code" onClick="makeCode()" -->
+            <input type="button" value="Add PNG" onClick="document.getElementById('uploadimage').click();">
+            <input type="file" id="uploadimage" name="uploadimage" value="Load" onChange="uploadImage()" style="display:none;">
+            <input type="button" value="Run" onClick="startEmulator()">
+        </div>
+    </div>
+    <div id="emulator" style="display:block; float:right; width:512px; padding-top: 31px;   ">
+        <div name="cartridges" id="cartridges"></div>
+        <div class="canvas-wrapper" style="max-height:520px; background-color: black;">
+            <canvas id="canvas" tabindex="-1" width="512" height="512" onclick="window.focus()"
+                oncontextmenu="event.preventDefault()"></canvas>
+            <div id="canvas-drop" class="canvas-overlay canvas-noclick" style="display: none">
+            </div>
+            <div id="canvas-load" class="canvas-overlay canvas-noclick" style="display: none">
+                <div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24">
+                        <path fill="currentColor"
+                            d="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8A8 8 0 0 1 12 20Z" opacity="0.5" />
+                        <path fill="currentColor" d="M20 12h2A10 10 0 0 0 12 2V4A8 8 0 0 1 20 12Z">
+                            <animateTransform attributeName="transform" dur="1s" from="0 12 12" repeatCount="indefinite"
+                                to="360 12 12" type="rotate" />
+                        </path>
+                    </svg>
+                </div>
+            </div>
+            <div id="canvas-start" class="canvas-overlay" style="display: none" onclick="rivemuStart()">
+                <div class="svg-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16">
+                        <path fill="currentColor"
+                            d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0M1.5 8a6.5 6.5 0 1 0 13 0a6.5 6.5 0 0 0-13 0m4.879-2.773l4.264 2.559a.25.25 0 0 1 0 .428l-4.264 2.559A.25.25 0 0 1 6 10.559V5.442a.25.25 0 0 1 .379-.215" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <div class="content-wrapper">
+            <div id="button-box">
+                <button id="record" title="Record" onclick="rivemuRecord()" disabled autocomplete="off">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M19 12c0 3.86-3.14 7-7 7s-7-3.14-7-7s3.14-7 7-7s7 3.14 7 7" />
+                    </svg>
+                </button>
+                <button id="replay" title="Replay" onclick="rivemuReplay()" disabled autocomplete="off">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path fill="currentColor"
+                            d="M12 22q-1.875 0-3.512-.712t-2.85-1.925t-1.925-2.85T3 13h2q0 2.925 2.038 4.963T12 20t4.963-2.037T19 13t-2.037-4.962T12 6h-.15l1.55 1.55L12 9L8 5l4-4l1.4 1.45L11.85 4H12q1.875 0 3.513.713t2.85 1.925t1.925 2.85T21 13t-.712 3.513t-1.925 2.85t-2.85 1.925T12 22" />
+                    </svg>
+                </button>
+                <button id="stop" title="Stop" onclick="rivemuStop()" disabled autocomplete="off">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M6 18V6h12v12z" />
+                    </svg>
+                </button>
+                <button id="pause" title="Toggle Pause" onclick="rivemuPause()" disabled autocomplete="off">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M3 5v14l8-7m2 7h3V5h-3m5 0v14h3V5" />
+                    </svg>
+                </button>
+                <button id="change-speed" title="Toggle Speed" onclick="rivemuChangeSpeed()" disabled autocomplete="off">
+                    1.0X
+                </button>
+                <button id="fullscreen" title="Fullscreen" onclick="rivemuFullscreen()" autocomplete="off">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M3 21v-5h2v3h3v2zm13 0v-2h3v-3h2v5zM3 8V3h5v2H5v3zm16 0V5h-3V3h5v5z" />
+                    </svg>
+                </button>
+                <button id="analyze" title="Analyze" onclick="rivemuToggleAnalysis()" autocomplete="off">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path fill="currentColor"
+                            d="M21.71 7.29a1 1 0 0 0-1.42 0L14 13.59l-4.29-4.3a1 1 0 0 0-1.42 0l-6 6a1 1 0 0 0 0 1.42a1 1 0 0 0 1.42 0L9 11.41l4.29 4.3a1 1 0 0 0 1.42 0l7-7a1 1 0 0 0 0-1.42" />
+                    </svg>
+                </button>
+                <button id="info" title="Info" onclick="rivemuToggleInfo()" autocomplete="off">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16">
+                        <path fill="currentColor"
+                            d="m8.93 6.588l-2.29.287l-.082.38l.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319c.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246c-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0a1 1 0 0 1 2 0" />
+                    </svg>
+                </button>
+            </div>
+            <div id="analysis-box" style="display: none">
+                <div class="row">
+                    <div class="column-2">
+                        <table>
+                            <tr>
+                                <th>Status</th>
+                                <td><span id="status">Downloading emulator...</span></td>
+                            </tr>
+                            <tr>
+                                <th>Time</th>
+                                <td><span id="time">N/A</span></td>
+                            </tr>
+                            <tr>
+                                <th>Frame</th>
+                                <td><span id="frame">N/A</span></td>
+                            </tr>
+                            <tr>
+                                <th>Progress</th>
+                                <td><span id="progress">N/A</span></td>
+                            </tr>
+                            <tr>
+                                <th>Score</th>
+                                <td><span id="score">N/A</span></td>
+                            </tr>
+                            <tr>
+                                <th>Resolution</th>
+                                <td><span id="resolution">N/A</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="column-2">
+                        <table>
+                            <tr>
+                                <th>FPS</th>
+                                <td><span id="fps">N/A</span></td>
+                            </tr>
+                            <tr>
+                                <th>CPU Cost</th>
+                                <td><span id="cpuCost">N/A</span></td>
+                            </tr>
+                            <tr>
+                                <th>CPU Speed</th>
+                                <td><span id="cpuSpeed">N/A</span></td>
+                            </tr>
+                            <tr>
+                                <th>CPU Usage</th>
+                                <td><span id="cpuUsage">N/A</span></td>
+                            </tr>
+                            <tr>
+                                <th>CPU Cycles</th>
+                                <td><span id="cpuCycles">N/A</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <table>
+                    <tr>
+                        <th>Cartridge</th>
+                        <td>
+                            <span id="carthash">N/A</span> - <span id="cartsize">N/A</span>
+                            <button id="upload_cartridge" autocomplete="off" onclick="rivemuUploadCartridge()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <path fill="currentColor"
+                                        d="M11 16V7.85l-2.6 2.6L7 9l5-5l5 5l-1.4 1.45l-2.6-2.6V16zm-7 4v-5h2v3h12v-3h2v5z" />
+                                </svg>
+                            </button>
+                            <button id="download_cartridge" autocomplete="off" disabled onclick="rivemuDownloadCartridge()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <path fill="currentColor"
+                                        d="m12 16l-5-5l1.4-1.45l2.6 2.6V4h2v8.15l2.6-2.6L17 11zm-8 4v-5h2v3h12v-3h2v5z" />
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Tape</th>
+                        <td>
+                            <span id="tapehash">N/A</span> - <span id="tapesize">N/A</span>
+                            <button id="upload_tape" autocomplete="off" onclick="rivemuUploadTape()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <path fill="currentColor"
+                                        d="M11 16V7.85l-2.6 2.6L7 9l5-5l5 5l-1.4 1.45l-2.6-2.6V16zm-7 4v-5h2v3h12v-3h2v5z" />
+                                </svg>
+                            </button>
+                            <button id="download_tape" disabled autocomplete="off" onclick="rivemuDownloadTape()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <path fill="currentColor"
+                                        d="m12 16l-5-5l1.4-1.45l2.6 2.6V4h2v8.15l2.6-2.6L17 11zm-8 4v-5h2v3h12v-3h2v5z" />
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Incard</th>
+                        <td>
+                            <span id="inhash">N/A</span> - <span id="insize">N/A</span>
+                            <button id="upload_incard" autocomplete="off" onclick="rivemuUploadIncard()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <path fill="currentColor"
+                                        d="M11 16V7.85l-2.6 2.6L7 9l5-5l5 5l-1.4 1.45l-2.6-2.6V16zm-7 4v-5h2v3h12v-3h2v5z" />
+                                </svg>
+                            </button>
+                            <button id="download_incard" disabled autocomplete="off" onclick="rivemuDownloadIncard()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <path fill="currentColor"
+                                        d="m12 16l-5-5l1.4-1.45l2.6 2.6V4h2v8.15l2.6-2.6L17 11zm-8 4v-5h2v3h12v-3h2v5z" />
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Outcard</th>
+                        <td>
+                            <span id="outhash">N/A</span> - <span id="outsize">N/A</span>
+                            <button id="download_outcard" disabled autocomplete="off" onclick="rivemuDownloadOutcard()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <path fill="currentColor"
+                                        d="m12 16l-5-5l1.4-1.45l2.6 2.6V4h2v8.15l2.6-2.6L17 11zm-8 4v-5h2v3h12v-3h2v5z" />
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Entropy</th>
+                        <td>
+                            <span id="entropyhash">N/A</span> - <span id="entropysize">N/A</span>
+                            <br />
+                            <input type="text" id="entropy" autocomplete="off" style="width: 99%" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Args</th>
+                        <td>
+                            <span id="argshash">N/A</span> - <span id="argssize">N/A</span>
+                            <br />
+                            <input type="text" id="args" autocomplete="off" style="width: 99%" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="info-box" style="display: none">
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <td><span id="name"></span></td>
+                    </tr>
+                    <tr>
+                        <th>Summary</th>
+                        <td><span id="summary"></span></td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>
+                            <pre id="description"></pre>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Tags</th>
+                        <td id="tags"></td>
+                    </tr>
+                    <tr>
+                        <th>Links</th>
+                        <td id="links"></td>
+                    </tr>
+                    <tr>
+                        <th>Authors</th>
+                        <td id="authors"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- Rives emulator -->
+    <script src="https://emulator.rives.io/index.js"></script>
+    <script async src="https://emulator.rives.io/rivemu.js"></script>
+    <script>
+        // Override resetCanvasSize()
+        function resetCanvasSize() {
+            canvasElem.width = 512;
+            canvasElem.height = 512;
+        }
+    </script>
+</BODY>
+</HTML>
